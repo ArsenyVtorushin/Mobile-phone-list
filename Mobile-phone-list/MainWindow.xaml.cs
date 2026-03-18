@@ -35,14 +35,44 @@ namespace Mobile_phone_list
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            phones.Add(new Phone
+            decimal price;
+            if (titleView.Text != null && titleView.Text != "" &&
+                companyView.Text != null && companyView.Text != "" &&
+                priceView.Text != null && priceView.Text != "" &&
+                decimal.TryParse(priceView.Text, out price))
             {
-                Title = titleView.Text,
-                Company = companyView.Text,
-                Price = Convert.ToDecimal(priceView.Text)
-            });
+                phones.Add(new Phone
+                {
+                    Title = titleView.Text,
+                    Company = companyView.Text,
+                    Price = price
+                });
+            }
+            else
+            {
+                if (titleView.Text == null || titleView.Text == "" ||
+                companyView.Text == null || companyView.Text == "")
+                {
+                    MessageBox.Show(
+                        "Поля не должны быть пустыми!",
+                        "Ошибка приложения",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+                else if (priceView.Text == null || priceView.Text != "" ||
+                !decimal.TryParse(priceView.Text, out price))
+                {
+                    MessageBox.Show(
+                        "Поле \"Цена\" должно быть числом!", 
+                        "Ошибка приложения",            
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Error             
+                    );
+                }
+            }
 
-            mainListBox.ItemsSource = null;
+                mainListBox.ItemsSource = null;
             mainListBox.ItemsSource = phones;
 
             titleView.Text = null;
