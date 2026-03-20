@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -16,7 +17,9 @@ namespace Mobile_phone_list
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Phone> phones;
+        List<Phone> phones; 
+        Phone tempPhone;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -30,7 +33,6 @@ namespace Mobile_phone_list
             };
 
             mainListBox.ItemsSource = phones;
-            
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -80,11 +82,98 @@ namespace Mobile_phone_list
             priceView.Text = null;
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private void EditButton_Click(object sender, EventArgs e)
+        {
+            var selectedPhone = mainListBox.SelectedItem as Phone;
+
+            if (selectedPhone == null)
+            {
+                MessageBox.Show("Выберите элемент для редактирования!");
+                return;
+            }
+
+            tempPhone = selectedPhone;
+
+            titleView.Text = tempPhone.Title;
+            companyView.Text = tempPhone.Company;
+            priceView.Text = tempPhone.Price.ToString();
+
+            addButtonView.IsEnabled = false;
+            trashButtonView.IsEnabled = false;
+            editButtonView.IsEnabled = false;
+
+            mainListBox.IsEnabled = false;
+
+            saveButton.Visibility = Visibility.Visible;
+            cancelButton.Visibility = Visibility.Visible;
+        }
+        
+        private void TrashButton_Click(object sender, RoutedEventArgs e)
         {
             phones.Remove(mainListBox.SelectedItem as Phone);
             mainListBox.ItemsSource = null;
             mainListBox.ItemsSource = phones;
+        }
+
+        private void EndEditing()
+        {
+            titleView.Text = String.Empty;
+            companyView.Text = String.Empty;
+            priceView.Text = String.Empty;
+
+            addButtonView.IsEnabled = true;
+            trashButtonView.IsEnabled = true;
+            editButtonView.IsEnabled = true;
+            mainListBox.IsEnabled = true;
+
+            saveButton.Visibility = Visibility.Collapsed;
+            cancelButton.Visibility = Visibility.Collapsed;
+
+            tempPhone = null;
+        }        
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) => EndEditing();
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (tempPhone != null)
+            {
+                if (titleView.Text == null || titleView.Text == "" ||
+                companyView.Text == null || companyView.Text == "")
+                {
+                    MessageBox.Show(
+                        "Поля не должны быть пустыми!",
+                        "Ошибка приложения",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+                else
+                {
+                    tempPhone.Title = titleView.Text;
+                    tempPhone.Company = companyView.Text;
+                }
+
+                int price;
+                if (int.TryParse(priceView.Text, out price))
+                {
+                    tempPhone.Price = price;
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Поле \"Цена\" должно быть числом!",
+                        "Ошибка приложения",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+
+                mainListBox.ItemsSource = null;
+                mainListBox.ItemsSource = phones;
+            }
+
+            EndEditing();
         }
     }
 }

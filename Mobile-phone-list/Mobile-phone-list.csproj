@@ -9,4 +9,16 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="img\edit.png" />
+    <None Remove="img\plus.png" />
+    <None Remove="img\trash.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="img\edit.png" />
+    <Resource Include="img\plus.png" />
+    <Resource Include="img\trash.png" />
+  </ItemGroup>
+
 </Project>
